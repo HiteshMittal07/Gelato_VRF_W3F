@@ -2,8 +2,13 @@
 pragma solidity ^0.8.20;
 import {ERC2771Context} from "@gelatonetwork/relay-context/contracts/vendor/ERC2771Context.sol";
 import {GelatoVRFConsumerBase} from "./GelatoVRFConsumerBase.sol";
+import {AutomateReady} from "./AutomateReady.sol";
 
-contract SimpleContract is ERC2771Context, GelatoVRFConsumerBase {
+contract SimpleContract is
+    ERC2771Context,
+    GelatoVRFConsumerBase,
+    AutomateReady
+{
     uint256 public myNumber;
     uint64 randomnessId;
     bytes32 public latestRandomness;
@@ -25,8 +30,10 @@ contract SimpleContract is ERC2771Context, GelatoVRFConsumerBase {
     constructor(
         uint256 _number,
         address _trustedForwader,
-        address operator
-    ) ERC2771Context(_trustedForwader) {
+        address operator,
+        address _automate,
+        address _taskCreator
+    ) ERC2771Context(_trustedForwader) AutomateReady(_automate, _taskCreator) {
         myNumber = _number;
         operatorAddr = operator;
     }
@@ -54,6 +61,10 @@ contract SimpleContract is ERC2771Context, GelatoVRFConsumerBase {
 
         latestRandomness = bytes32(_randomness);
         randomnessId = uint64(_requestId);
+
+        (uint256 fee, address feeToken) = _getFeeDetails();
+
+        _transfer(fee, feeToken);
 
         emit RandomnessFulfilled(uint64(_requestId), request);
     }
