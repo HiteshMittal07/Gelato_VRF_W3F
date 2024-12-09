@@ -9,7 +9,7 @@ require("dotenv").config();
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string;
 const config: HardhatUserConfig = {
   w3f: {
-    rootDir: "./frontend/src",
+    rootDir: "/",
     debug: false,
     networks: ["hardhat", "sepolia"],
   },
