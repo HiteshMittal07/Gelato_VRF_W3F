@@ -1,13 +1,28 @@
-# Sample Hardhat Project
+# Simple Implementation of how to implement fee payment from contract in case of VRF using W3F.
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+## Step 1:
 
-Try running some of the following tasks:
+Firstly inherit both GelatoVRFConsumerBase and AutomateReady(which will help transaction pay for itself) in your contract.
+[Check here](https://github.com/HiteshMittal07/Gelato_VRF_W3F/blob/main/contracts/SimpleContract.sol)
+Where constructor will have `_automate` as an address for preferred network [Check here](https://docs.gelato.network/web3-services/web3-functions/contract-addresses)
+and `task_creator` will have address of task creator in app.gelato.network
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+## Step 2:
+
+Now create a typescript function for W3F which will be be automatically executed whenever `RandomnessRequested(uint64 requestId)` event will be triggered, this can be implemented as [Check here](https://github.com/HiteshMittal07/Gelato_VRF_W3F/blob/main/Web3-Functions/index.ts)
+
+## Step 3:
+
+Now deploy your contract and create W3F task from app.gelato.network with trigger type On-chain Event, with typescript function as automation type and select transaction pays for itself. [Click here to create task](https://app.gelato.network/functions/create)
+
+# How this work?
+
+Whenever the user will call the `requestRandomness(bytes memory \_data)` in your contract, the event will be triggered, which will be picked by W3F which will further call the `fulfillRandomness(uint256 randomness,bytes calldata dataWithRound)` function automatically, and then `_fullfillRandomness()` will be called which will have your logic.
+
+Add this to your `_fullfillRandomness()` function. This will transfer the fee from your contract.
+
+```
+(uint256 fee, address feeToken) = _getFeeDetails();
+
+        _transfer(fee, feeToken);
 ```
