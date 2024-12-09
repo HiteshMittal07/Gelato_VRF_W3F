@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import {ERC2771Context} from "@gelatonetwork/relay-context/contracts/vendor/ERC2771Context.sol";
 import {GelatoVRFConsumerBase} from "./GelatoVRFConsumerBase.sol";
 import {AutomateReady} from "./AutomateReady.sol";
 
 contract SimpleContract is
-    ERC2771Context,
     GelatoVRFConsumerBase,
     AutomateReady
 {
@@ -29,11 +27,10 @@ contract SimpleContract is
 
     constructor(
         uint256 _number,
-        address _trustedForwader,
         address operator,
         address _automate,
         address _taskCreator
-    ) ERC2771Context(_trustedForwader) AutomateReady(_automate, _taskCreator) {
+    ) AutomateReady(_automate, _taskCreator) {
         myNumber = _number;
         operatorAddr = operator;
     }
