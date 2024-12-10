@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { deployments } from "hardhat";
 import { expect } from "chai";
 import { before } from "mocha";
 import {
@@ -17,15 +17,11 @@ describe("SimpleContract Tests", function () {
   before(async function () {
     const dedicatedMsgSenderAddress =
       "0x11ae45Ab10039D1EA50A54edd2638200fa3aFaEa";
-    contract = await ethers.deployContract("SimpleContract", [
-      345,
-      "0x11ae45Ab10039D1EA50A54edd2638200fa3aFaEa",
-      "0x2A6C106ae13B558BB9E2Ec64Bd2f1f7BEFF3A5E0",
-      "0x745f19971E623775141D65440f5a4a2A83c25Ac3",
-    ]);
-    await contract.waitForDeployment();
+    await deployments.fixture();
 
+    contract = await ethers.getContract("SimpleContract");
     simpleW3f = w3f.get("Web3-Functions");
+
     const address = contract.target as string;
     userArgs = {
       consumerAddress: address,
@@ -45,14 +41,17 @@ describe("SimpleContract Tests", function () {
     });
     dedicatedSigner = await ethers.getSigner(dedicatedMsgSenderAddress);
 
-    const data = ethers.encodeBytes32String("VRF test implementation");
-    console.log(data);
-    const tx = await contract
-      .connect(dedicatedSigner)
-      .requestRandomness(data, { gasLimit: 1000000 });
+    const depositAmount = ethers.parseEther("1.0");
+    const tx = await dedicatedSigner.sendTransaction({
+      to: contract.target,
+      value: depositAmount,
+    });
   });
 
   it("canExec: true - First execution", async () => {
+    const data = ethers.encodeBytes32String("VRF test implementation");
+    const tx = await contract.requestRandomness(data, { gasLimit: 1000000 });
+
     let { result } = await simpleW3f.run("onRun", { userArgs });
     result = result as Web3FunctionResultV2;
 
@@ -72,5 +71,13 @@ describe("SimpleContract Tests", function () {
     console.log(updatedNumber);
 
     expect(updatedNumber).to.equal("5");
+  });
+
+  it("Checking event emitting", async () => {
+    const data = ethers.encodeBytes32String("VRF test implementation");
+    await expect(contract.requestRandomness(data)).to.emit(
+      contract,
+      "RequestedRandomness(uint256 round, bytes data)"
+    );
   });
 });
