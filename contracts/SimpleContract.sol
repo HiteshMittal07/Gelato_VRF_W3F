@@ -3,10 +3,7 @@ pragma solidity ^0.8.20;
 import {GelatoVRFConsumerBase} from "./GelatoVRFConsumerBase.sol";
 import {AutomateReady} from "./AutomateReady.sol";
 
-contract SimpleContract is
-    GelatoVRFConsumerBase,
-    AutomateReady
-{
+contract SimpleContract is GelatoVRFConsumerBase, AutomateReady {
     uint256 public myNumber;
     uint64 randomnessId;
     bytes32 public latestRandomness;
@@ -35,6 +32,8 @@ contract SimpleContract is
         operatorAddr = operator;
     }
 
+    receive() external payable {}
+
     function requestRandomness(bytes memory _data) external {
         randomnessId = uint64(_requestRandomness(_data));
         emit RandomnessRequested(randomnessId);
@@ -60,9 +59,9 @@ contract SimpleContract is
         randomnessId = uint64(_requestId);
 
         (uint256 fee, address feeToken) = _getFeeDetails();
-
         _transfer(fee, feeToken);
 
+        myNumber = 5;
         emit RandomnessFulfilled(uint64(_requestId), request);
     }
 
