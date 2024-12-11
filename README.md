@@ -26,3 +26,12 @@ Add this to your `_fullfillRandomness()` function. This will transfer the fee fr
 
         _transfer(fee, feeToken);
 ```
+
+# How you can test?
+
+Whenever the event is emitted you can store the log of event in the `log.json` (look at schema in `Web3-Functions/log.json`) in the same directory of Web3-Functions.
+Then you can test the function by running the command :-
+
+`npx w3f test /path/to/web-funtion/index.ts --logs --chain-id=31337`
+
+or for any URL you pass in PROVIDER_URLS in .env

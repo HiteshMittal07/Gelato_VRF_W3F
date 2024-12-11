@@ -1,1 +1,11 @@
-{}
+{
+  "blockNumber": "",
+  "blockHash": "",
+  "transactionIndex": "",
+  "removed": false,
+  "address": "",
+  "data": "",
+  "topics": [""],
+  "transactionHash": "",
+  "logIndex": ""
+}
