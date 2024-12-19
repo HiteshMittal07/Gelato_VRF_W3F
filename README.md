@@ -9,7 +9,7 @@ and `task_creator` will have address of task creator in app.gelato.network
 
 ## Step 2:
 
-Now create a typescript function for W3F which will be be automatically executed whenever `RandomnessRequested(uint64 requestId)` event will be triggered, this can be implemented as [Check here](https://github.com/HiteshMittal07/Gelato_VRF_W3F/blob/main/Web3-Functions/index.ts)
+Now create a typescript function for W3F which will be be automatically executed whenever `RandomnessRequested(uint64 requestId)` event will be triggered, this can be implemented as [Check here](https://github.com/HiteshMittal07/Gelato_VRF_W3F/blob/main/Web3-Functions/index.ts) and to deploy the web3-functions you can use `npx w3f deploy Web3-Functions/index.ts` and make sure .env file is present with `PROVIDER_URLS`.
 
 ## Step 3:
 
